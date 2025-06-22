@@ -16,14 +16,14 @@ for i, instr in enumerate(content.split('\n')):
     if i != 0:
         rules.append(instr)
 
-print(f'Instrucciones {rules}')
+# print(f'Instrucciones {rules}')
 
 results = []
 
 #conversión de {contenido} a lista
 def parse_field(val):
     val = val.strip()
-    if val.startswith('{') and val.endswith('}'):
+    if (val.startswith('{') and val.endswith('}')) or (val.startswith('[') and val.endswith(']')):
         return [s.strip() for s in val[1:-1].split(',')]
     return val
 
@@ -44,13 +44,13 @@ for i in rules:
     match = re.search(r'\((.*)\)', i)
     if not match:
         continue
-
     body = match.group(1)
 
     #caso {contenido}
     items = []
     current = ''
     inside_braces = False
+    inside_brackets = False
 
     #separación de cada elemento por comas si no está dentro de {}
     for char in body:
@@ -58,8 +58,11 @@ for i in rules:
             inside_braces = True
         elif char == '}':
             inside_braces = False
-
-        if char == ',' and not inside_braces:
+        elif char == '[':
+            inside_brackets = True
+        elif char == ']':
+            inside_brackets = False
+        if char == ',' and not inside_braces and not inside_brackets:
             items.append(current.strip())
             current = ''
         else:
@@ -71,12 +74,40 @@ for i in rules:
     if len(items) >= 5:
         results.append({
             'tipo': tipo,
-            'ei': items[0],
-            'ef': items[1],
-            'sl': parse_field(items[2]),
-            'se': parse_field(items[3]),
+            'ei': parse_field(items[0]),
+            'ef': parse_field(items[1]),
+            'si': parse_field(items[2]),
+            'sf': parse_field(items[3]),
             'dir': items[4]                
         })
 
-for i in results:
-    print(i)
+#================================================================================================
+#================================================================================================
+for lists in results:
+    # print(lists)
+    for key, values in lists.items():
+        # print(type(values))
+        if key == 'ei' and values == '~':
+            lists[key] = lists['ef']
+            # print(lists)
+        elif key == 'ef' and values == '~':
+            lists[key] = lists['ei']
+            # print(lists)
+        elif key == 'si' and values == '~':
+            lists[key] = lists['sf']
+            # print(lists)
+        elif key == 'sf' and values == '~':
+            lists[key] = lists['si']
+            # print(lists)
+
+for lists in results:
+    for key, values in lists.items():
+        if key == 'ef' and isinstance(values,list):
+            new_list = []
+            for v in values:
+                if v == '~':
+                    new_list.append(lists['ei'])
+                else:
+                    new_list.append(v)
+            lists[key] = new_list
+    print(lists)

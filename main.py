@@ -17,8 +17,11 @@ for i, instr in enumerate(content.split('\n')):
 
 # print(f'Instrucciones {rules}')
 #=============================================================================================
-user_string = input('Favor de introducir cadena: ')
+# user_string = input('Favor de introducir cadena: ')
+user_string = '01101'
 print(f'Hi {user_string}')
+current_state = '00'
+print(f'current state:{current_state}')
 #=============================================================================================
 
 new_rules = []
@@ -113,7 +116,22 @@ for lists in new_rules:
                 else:
                     new_list.append(v)
             lists[key] = new_list
-#================================================================================================
-#================================================================================================
+
+list_string = [n for n in user_string] + (['B'] * (len(user_string)*4))
+print(list_string)
+# print(f'instructions:{new_rules}')
+pos = 0
 for i in new_rules:
     print(i)
+#================================================================================================
+#================================================================================================
+#===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
+# while current_state not in estados_aceptacion:
+#     symbol = list_string[pos] #empieza en la posicion inicial (0 -> 00)
+#     change = False
+
+
+
+#================================================================================================
+#================================================================================================
+#===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================

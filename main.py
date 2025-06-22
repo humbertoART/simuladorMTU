@@ -1,7 +1,6 @@
 import re 
-
+#Lectura archivo
 file = open(r"C:\Users\hrosa\OneDrive\Documentos\CIC IPN\Primer Semestre\Teoria Computacion\SIMULADORMTU\text.txt")
-
 content = file.read()
 
 #Extracción de estados de aceptación 
@@ -17,9 +16,12 @@ for i, instr in enumerate(content.split('\n')):
         rules.append(instr)
 
 # print(f'Instrucciones {rules}')
+#=============================================================================================
+user_string = input('Favor de introducir cadena: ')
+print(f'Hi {user_string}')
+#=============================================================================================
 
-results = []
-
+new_rules = []
 #conversión de {contenido} a lista
 def parse_field(val):
     val = val.strip()
@@ -72,7 +74,7 @@ for i in rules:
         items.append(current.strip())
         
     if len(items) >= 5:
-        results.append({
+        new_rules.append({
             'tipo': tipo,
             'ei': parse_field(items[0]),
             'ef': parse_field(items[1]),
@@ -83,7 +85,8 @@ for i in rules:
 
 #================================================================================================
 #================================================================================================
-for lists in results:
+#INTERCAMBIO DE SIMBOLO '~' POR ESTADO/SIMBOLO RECIPROCO
+for lists in new_rules:
     # print(lists)
     for key, values in lists.items():
         # print(type(values))
@@ -100,7 +103,7 @@ for lists in results:
             lists[key] = lists['si']
             # print(lists)
 
-for lists in results:
+for lists in new_rules:
     for key, values in lists.items():
         if key == 'ef' and isinstance(values,list):
             new_list = []
@@ -110,4 +113,7 @@ for lists in results:
                 else:
                     new_list.append(v)
             lists[key] = new_list
-    print(lists)
+#================================================================================================
+#================================================================================================
+for i in new_rules:
+    print(i)

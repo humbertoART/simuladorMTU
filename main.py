@@ -18,7 +18,7 @@ for i, instr in enumerate(content.split('\n')):
 # print(f'Instrucciones {rules}')
 #=============================================================================================
 # user_string = input('Favor de introducir cadena: ')
-user_string = '01101'
+user_string = 'bbbb'
 print(f'Hi {user_string}')
 current_state = '00'
 print(f'current state:{current_state}')
@@ -126,12 +126,96 @@ for i in new_rules:
 #================================================================================================
 #================================================================================================
 #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
-# while current_state not in estados_aceptacion:
-#     symbol = list_string[pos] #empieza en la posicion inicial (0 -> 00)
-#     change = False
+def show(cinta, pos, state):
+    exit = ''
+    for i, c in enumerate(cinta):
+        if i == pos:
+            exit += f"[{c}]"
+        else:
+            exit += c
+    print(f"Cinta: {exit} state:{state}")
 
+while current_state not in estados_aceptacion:
+    symbol = list_string[pos]
+    apply_instruction = None
 
+    for rule in new_rules:
+        tipo = rule.get('tipo','N') #obtener tipo de isntrucción
+        ei = rule['ei'] # estado inicial
+        si = rule['si'] # simbolo inicial
 
+        if isinstance(ei, list):
+            if current_state in ei:
+                match_state = True
+            else:
+                match_state = False
+
+        else:
+            if current_state == ei:
+                match_state = True
+            else:
+                match_state = False
+
+        if isinstance(si, list):
+            if symbol in si:
+                match_symbol = True
+            else:
+                match_symbol = False
+        
+        else:
+            if symbol == si:
+                match_symbol = True
+            else:
+                match_symbol = False
+
+        if match_state and match_symbol:
+            apply_instruction = rule
+            break
+
+    if not apply_instruction:
+        break
+
+    if isinstance(apply_instruction['si'],list):
+        index = apply_instruction['si'].index(symbol)
+    else:
+        index = 0
+
+    
+    if isinstance(apply_instruction['sf'],list):
+        sf = apply_instruction['sf'][index]
+    else:
+        sf = apply_instruction['sf']
+
+    if isinstance(apply_instruction['ef'], list):
+        ef = apply_instruction['ef'][index]
+    else:
+        ef = apply_instruction['ef']
+
+    dir = apply_instruction['dir']
+
+    print(f'estado actual:{current_state}')
+    print(f'curent symbol:{symbol}')
+    print(f'next state:{ef}')
+    print(f'written symbol:{sf}')
+    print(f'direction:{dir}')
+    print(f'rule aplied: {apply_instruction}')
+
+    list_string[pos] = sf
+    current_state = ef
+
+    if dir == '>':
+        pos += 1
+    elif dir == '<':
+        pos -= 1
+    else:
+        pos += 0
+
+    show(list_string, pos, current_state)
+
+    if apply_instruction['tipo'] != 'w' or apply_instruction['tipo'] != 'W':
+        continue
+    else:
+        pass
 #================================================================================================
 #================================================================================================
 #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================

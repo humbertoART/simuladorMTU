@@ -136,6 +136,10 @@ def show(cinta, pos, state):
     print(f"Cinta: {exit} state:{state} pos:{pos}")
 
 while current_state not in estados_aceptacion:
+    if list_string == []:
+        print('Escribió cadena vacía, no hay procesamiento')
+        break
+    
     symbol = list_string[pos]
     apply_instruction = None
 
@@ -202,17 +206,17 @@ while current_state not in estados_aceptacion:
 
     list_string[pos] = sf
     current_state = ef
-
-    # if pos == 0 and dir == '<':
-    #     print(f'ERROR: la cinta no es INFINITA! hacia la izquierda. Gracias')
-    #     break
+    #OJO; NO ESTOY SEGURO
+    if pos <0 and dir == '<':
+        print(f'ERROR: la cinta no es INFINITA! hacia la izquierda. Gracias')
+        break
 
     if dir == '>':
         pos += 1
     elif dir == '<':
         pos -= 1
-    else:
-        pos += 0
+    elif dir == '!':
+        pass
 
     show(list_string, pos, current_state)
 
@@ -223,3 +227,9 @@ while current_state not in estados_aceptacion:
 #================================================================================================
 #================================================================================================
 #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
+#PENDIENTES
+"""
+PENDIENTES:
+QUE HACER CON UN CICLO
+IMPRIMIR P
+"""

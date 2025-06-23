@@ -17,8 +17,8 @@ for i, instr in enumerate(content.split('\n')):
 
 # print(f'Instrucciones {rules}')
 #=============================================================================================
-# user_string = input('Favor de introducir cadena: ')
-user_string = 'bbbb'
+user_string = input('Favor de introducir cadena: ')
+# user_string = '01101'
 print(f'Hi {user_string}')
 current_state = '00'
 print(f'current state:{current_state}')
@@ -133,7 +133,7 @@ def show(cinta, pos, state):
             exit += f"[{c}]"
         else:
             exit += c
-    print(f"Cinta: {exit} state:{state}")
+    print(f"Cinta: {exit} state:{state} pos:{pos}")
 
 while current_state not in estados_aceptacion:
     symbol = list_string[pos]
@@ -202,6 +202,10 @@ while current_state not in estados_aceptacion:
 
     list_string[pos] = sf
     current_state = ef
+
+    # if pos == 0 and dir == '<':
+    #     print(f'ERROR: la cinta no es INFINITA! hacia la izquierda. Gracias')
+    #     break
 
     if dir == '>':
         pos += 1

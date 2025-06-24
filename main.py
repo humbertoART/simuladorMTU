@@ -134,8 +134,8 @@ def simuladorMTU():
     # print(list_string)
     # print(f'instructions:{new_rules}')
     pos = 0
-    # for i in new_rules:
-    #     print(i)
+    for i in new_rules:
+        print(i)
     #================================================================================================
     #================================================================================================
     #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
@@ -209,12 +209,12 @@ def simuladorMTU():
 
         dir = apply_instruction['dir']
 
-        # print(f'estado actual:{current_state}')
-        # print(f'curent symbol:{symbol}')
-        # print(f'next state:{ef}')
-        # print(f'written symbol:{sf}')
-        # print(f'direction:{dir}')
-        # print(f'rule aplied: {apply_instruction}')
+        print(f'estado actual:{current_state}')
+        print(f'curent symbol:{symbol}')
+        print(f'next state:{ef}')
+        print(f'written symbol:{sf}')
+        print(f'direction:{dir}')
+        print(f'rule aplied: {apply_instruction}')
 
         list_string[pos] = sf
         current_state = ef

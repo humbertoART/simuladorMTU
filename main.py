@@ -117,6 +117,17 @@ for lists in new_rules:
                     new_list.append(v)
             lists[key] = new_list
 
+for lists in new_rules:
+    for key, values in lists.items():
+        if key == 'sf' and isinstance(values,list) and isinstance(lists['si'],list):
+            lista = []
+            for i, v in enumerate(values):
+                if v == '~':
+                    lista.append(lists['si'][i])
+                else:
+                    lista.append(v)
+            lists[key]  = lista
+
 list_string = [n for n in user_string] + (['B'] * (len(user_string)*4))
 print(list_string)
 # print(f'instructions:{new_rules}')
@@ -183,8 +194,6 @@ while current_state not in estados_aceptacion:
         index = apply_instruction['si'].index(symbol)
     else:
         index = 0
-
-    
     if isinstance(apply_instruction['sf'],list):
         sf = apply_instruction['sf'][index]
     else:

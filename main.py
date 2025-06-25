@@ -44,14 +44,6 @@ def simuladorMTU():
 
     # print(f'Instrucciones {rules}')
     #=============================================================================================
-    #=============================================================================================
-    #==================================SOLICITUD USUARIO CADENA===================================
-    user_string = input('Favor de introducir cadena: ')
-    # user_string = '11+111'
-    # print(f'Hi {user_string}')
-    current_state = '00'
-    # print(f'current state:{current_state}')
-    #=============================================================================================
     new_rules = []
     #conversión de {contenido} a lista
     def parse_field(val):
@@ -121,14 +113,14 @@ def simuladorMTU():
         # print(lists)
         for key, values in lists.items():
             # print(type(values))
-            if key == 'ei' and values == '~':
-                lists[key] = lists['ef']
+            # if key == 'ei' and values == '~':
+            #     lists[key] = lists['ef']
                 # print(lists)
-            elif key == 'ef' and values == '~':
+            if key == 'ef' and values == '~':
                 lists[key] = lists['ei']
                 # print(lists)
-            elif key == 'si' and values == '~':
-                lists[key] = lists['sf']
+            # elif key == 'si' and values == '~':
+            #     lists[key] = lists['sf']
                 # print(lists)
             elif key == 'sf' and values == '~':
                 lists[key] = lists['si']
@@ -155,13 +147,19 @@ def simuladorMTU():
                     else:
                         lista.append(v)
                 lists[key]  = lista
+    #=============================================================================================
+    #=============================================================================================
+    #==================================SOLICITUD USUARIO CADENA===================================
+    user_string = input('Favor de introducir cadena: ')
+    # user_string = '11+111'
+    # print(f'Hi {user_string}')
+    current_state = '00'
+    # print(f'current state:{current_state}')                
 
     list_string = [n for n in user_string] + (['B'] * (len(user_string)*4))
     # print(list_string)
     # print(f'instructions:{new_rules}')
     pos = 0
-    for i in new_rules:
-        print(i)
     #================================================================================================
     #================================================================================================
     #=====================================MAQUINA DE TURING==========================================

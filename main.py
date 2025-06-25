@@ -3,12 +3,17 @@ import msvcrt
 import os
 #Escritura de cadena de entrada por usuario
 def user_string_input():
-    user_string = input('Favor de introducir cadena: ')
-    return user_string
+    while True:
+        user_string = input('Favor de introducir cadena: ')
+        if user_string:
+            return user_string
+        else:
+            print("Cadena vacía, ingresela, nuevamente\n")
 #Lectura archivo
 def simuladorMTU():
     dir_validate = {'!','>','<'}
     same_symbol = {'~'}
+    symbols_banned = {chr(123),'}','[',']','<','>','!'}
 
     def lector_texto():
         while True:
@@ -162,6 +167,18 @@ def simuladorMTU():
                 if key == 'ei' or key == 'ef' or key == 'si' or key == 'sf':
                     if not value:
                         print("Falta un elemento:")
+                        errors = True
+                        break
+                if key == 'ei' or key == 'ef' or key == 'si' or key == 'sf':
+                    if isinstance(value,list):
+                        for j in value:
+                            if j in symbols_banned:
+                                print("Incluye elementos reservados, no permitido")
+                                errors = True
+                                break
+                    elif value in symbols_banned:
+                        print('egrtszs',value)
+                        print("Incluye elementos reservados, no permitido")
                         errors = True
                         break
                 if key == 'dir':

@@ -1,8 +1,15 @@
 import re 
 import msvcrt
 import os
+#Escritura de cadena de entrada por usuario
+def user_string_input():
+    user_string = input('Favor de introducir cadena: ')
+    return user_string
 #Lectura archivo
 def simuladorMTU():
+    dir_validate = {'!','>','<'}
+    same_symbol = {'~'}
+
     def lector_texto():
         while True:
             user_text = input("Ingrese ruta del archivo de texto, por favor: ")
@@ -29,130 +36,184 @@ def simuladorMTU():
                 print('Las instrucciones no terminan en punto, ingrese nuevamente ruta:\n')
         return instructions
     
-    #Extracción de estados de aceptación 
-    instructions = lector_texto()
-    for i, instr in enumerate(instructions):
-        if i == 0:
-            estados_aceptacion = re.findall(r'\d+',instr)
+    while True:
+        #Extracción de estados de aceptación 
+        instructions = lector_texto()
+        for i, instr in enumerate(instructions):
+            if i == 0:
+                estados_aceptacion = re.findall(r'\d+',instr)
 
-    print(f'estado de aceptación:{estados_aceptacion}')
+        print(f'estado de aceptación:{estados_aceptacion}')
 
-    rules = []
-    for i, instr in enumerate(instructions):
-        if i != 0:
-            rules.append(instr)
+        rules = []
+        for i, instr in enumerate(instructions):
+            if i != 0:
+                rules.append(instr)
 
-    # print(f'Instrucciones {rules}')
-    #=============================================================================================
-    new_rules = []
-    #conversión de {contenido} a lista
-    def parse_field(val):
-        val = val.strip()
-        if (val.startswith('{') and val.endswith('}')) or (val.startswith('[') and val.endswith(']')):
-            return [s.strip() for s in val[1:-1].split(',')]
-        return val
+        # print(f'Instrucciones {rules}')
+        #=============================================================================================
+        new_rules = []
+        #conversión de {contenido} a lista
+        def parse_field(val):
+            val = val.strip()
+            if (val.startswith('{') and val.endswith('}')) or (val.startswith('[') and val.endswith(']')):
+                return [s.strip() for s in val[1:-1].split(',')]
+            return val
 
-    for i in rules:
-        #ignorar entradas vacías
-        i = i.strip()
-        if not i:
-            continue
+        for i in rules:
+            #ignorar entradas vacías
+            i = i.strip()
+            if not i:
+                continue
         
-        #de qué tipo de instrucción hablamos
-        tipo = 'N'
-        if i.startswith('W'):
-            tipo = 'W'
-        elif i.startswith('?'):
-            tipo = '?'
+            #de qué tipo de instrucción hablamos
+            tipo = 'N'
+            if i.startswith('W'):
+                tipo = 'W'
+            elif i.startswith('?'):
+                tipo = '?'
 
-        #extraemos contenido entre paréntesis
-        match = re.search(r'\((.*)\)', i)
-        if not match:
-            continue
-        body = match.group(1)
+            #extraemos contenido entre paréntesis
+            match = re.search(r'\((.*)\)', i)
+            if not match:
+                continue
+            body = match.group(1)
 
-        #caso {contenido}
-        items = []
-        current = ''
-        inside_braces = False
-        inside_brackets = False
+            #caso {contenido}
+            items = []
+            current = ''
+            inside_braces = False
+            inside_brackets = False
 
-        #separación de cada elemento por comas si no está dentro de {}
-        for char in body:
-            if char == '{':
-                inside_braces = True
-            elif char == '}':
-                inside_braces = False
-            elif char == '[':
-                inside_brackets = True
-            elif char == ']':
-                inside_brackets = False
-            if char == ',' and not inside_braces and not inside_brackets:
+            #separación de cada elemento por comas si no está dentro de {}
+            for char in body:
+                if char == '{':
+                    inside_braces = True
+                elif char == '}':
+                    inside_braces = False
+                elif char == '[':
+                    inside_brackets = True
+                elif char == ']':
+                    inside_brackets = False
+                if char == ',' and not inside_braces and not inside_brackets:
+                    items.append(current.strip())
+                    current = ''
+                else:
+                    current += char
+
+            if current:
                 items.append(current.strip())
-                current = ''
-            else:
-                current += char
 
-        if current:
-            items.append(current.strip())
+            if len(items) >= 5:
+                new_rules.append({
+                    'tipo': tipo,
+                    'ei': parse_field(items[0]),
+                    'ef': parse_field(items[1]),
+                    'si': parse_field(items[2]),
+                    'sf': parse_field(items[3]),
+                    'dir': items[4]                
+                })
+        #================================================================================================
+        #================================================================================================
+        #====================INTERCAMBIO DE SIMBOLO '~' POR ESTADO/SIMBOLO RECIPROCO=====================
+        #================================================================================================
+        for lists in new_rules:
+            # print(lists)
+            for key, values in lists.items():
+                # print(type(values))
+                # if key == 'ei' and values == '~':
+                #     lists[key] = lists['ef']
+                    # print(lists)
+                if key == 'ef' and values == '~':
+                    lists[key] = lists['ei']
+                    # print(lists)
+                # elif key == 'si' and values == '~':
+                #     lists[key] = lists['sf']
+                    # print(lists)
+                elif key == 'sf' and values == '~':
+                    lists[key] = lists['si']
+                    # print(lists)
 
-        if len(items) >= 5:
-            new_rules.append({
-                'tipo': tipo,
-                'ei': parse_field(items[0]),
-                'ef': parse_field(items[1]),
-                'si': parse_field(items[2]),
-                'sf': parse_field(items[3]),
-                'dir': items[4]                
-            })
-    #================================================================================================
-    #================================================================================================
-    #====================INTERCAMBIO DE SIMBOLO '~' POR ESTADO/SIMBOLO RECIPROCO=====================
-    #================================================================================================
-    for lists in new_rules:
-        # print(lists)
-        for key, values in lists.items():
-            # print(type(values))
-            # if key == 'ei' and values == '~':
-            #     lists[key] = lists['ef']
-                # print(lists)
-            if key == 'ef' and values == '~':
-                lists[key] = lists['ei']
-                # print(lists)
-            # elif key == 'si' and values == '~':
-            #     lists[key] = lists['sf']
-                # print(lists)
-            elif key == 'sf' and values == '~':
-                lists[key] = lists['si']
-                # print(lists)
+        for lists in new_rules:
+            for key, values in lists.items():
+                if key == 'ef' and isinstance(values,list):
+                    new_list = []
+                    for v in values:
+                        if v == '~':
+                            new_list.append(lists['ei'])
+                        else:
+                            new_list.append(v)
+                    lists[key] = new_list
 
-    for lists in new_rules:
-        for key, values in lists.items():
-            if key == 'ef' and isinstance(values,list):
-                new_list = []
-                for v in values:
-                    if v == '~':
-                        new_list.append(lists['ei'])
-                    else:
-                        new_list.append(v)
-                lists[key] = new_list
+        for lists in new_rules:
+            for key, values in lists.items():
+                if key == 'sf' and isinstance(values,list) and isinstance(lists['si'],list):
+                    lista = []
+                    for i, v in enumerate(values):
+                        if v == '~':
+                            lista.append(lists['si'][i])
+                        else:
+                            lista.append(v)
+                    lists[key]  = lista
 
-    for lists in new_rules:
-        for key, values in lists.items():
-            if key == 'sf' and isinstance(values,list) and isinstance(lists['si'],list):
-                lista = []
-                for i, v in enumerate(values):
-                    if v == '~':
-                        lista.append(lists['si'][i])
-                    else:
-                        lista.append(v)
-                lists[key]  = lista
+        errors = False
+        for i in new_rules:
+            for key, value in i.items():
+                if key == 'ei' or key == 'ef' or key == 'si' or key == 'sf':
+                    if not value:
+                        print("Falta un elemento:")
+                        errors = True
+                        break
+                if key == 'dir':
+                    if not value:
+                        print("Regla invalida")
+                        errors = True
+                        break
+                    elif value not in dir_validate:
+                        print("La dirección de las reglas no es la correcta\n")
+                        # lector_texto()
+                        errors = True
+                        break
+                elif key == 'ei':
+                    if isinstance(value,list):
+                        for j in value:
+                            if j in same_symbol:
+                                print("Es lista y es ~, ei")
+                                # lector_texto()
+                                errors = True
+                                break
+                    elif value == '~':
+                        print("No es lista pero esta mal,ei")
+                        # lector_texto()
+                        errors = True
+                        break
+
+                elif key == 'si':
+                    if isinstance(value,list):
+                        for k in value:
+                            if k in same_symbol:
+                                print("Es lista y es ~,si")
+                                # lector_texto()
+                                errors = True
+                                break
+                    elif value == '~':
+                        print("No es lista pero esta mal,si")
+                        # lector_texto()
+                        errors = True
+                        break
+        if errors:
+            print("Intentelo de nuevo\n")
+            continue
+        break
     #=============================================================================================
     #=============================================================================================
     #==================================SOLICITUD USUARIO CADENA===================================
-    user_string = input('Favor de introducir cadena: ')
+    # def user_string_input():
+    #     user_string = input('Favor de introducir cadena: ')
+    #     return user_string
     # user_string = '11+111'
     # print(f'Hi {user_string}')
+    user_string = user_string_input()
     current_state = '00'
     # print(f'current state:{current_state}')                
 
@@ -273,15 +334,9 @@ def simuladorMTU():
         print("La cadena ha sido rechazada")
     #================================================================================================
     #================================================================================================
-    #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
-    #PENDIENTES
-"""
-PENDIENTES:
-QUE HACER CON UN CICLO  
-IMPRIMIR P
-"""
 while True:
     simuladorMTU()
+    # user_string_input()
     reset = input("\n¿Desea reiniciar la simulación con otra cadena (S/N): ").strip()
     if reset != 'S':
         print("SIMULADOR DE MTU FINALIZADO")

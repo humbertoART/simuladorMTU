@@ -1,31 +1,57 @@
 import re 
 import msvcrt
+import os
 #Lectura archivo
 def simuladorMTU():
-    file = open(r"C:\Users\hrosa\OneDrive\Documentos\CIC IPN\Primer Semestre\Teoria Computacion\SIMULADORMTU\text.txt")
-    content = file.read()
+    def lector_texto():
+        while True:
+            user_text = input("Ingrese ruta del archivo de texto, por favor: ")
+            if not os.path.exists(user_text):
+                print("Texto no introducido, vuelva a intertalo\n")
+                continue
+            # file = open(r"C:\Users\hrosa\OneDrive\Documentos\CIC IPN\Primer Semestre\Teoria Computacion\SIMULADORMTU\text.txt")
+            file = open(user_text, "r", encoding="ascii")
+            content = file.read()
+            print(content)
 
+            instructions = content.split('\n')
+            end_dot = True
+
+            for instr in instructions:
+                line = instr.strip()
+                if line:
+                    if not line.endswith('.'):
+                        end_dot = False
+                        break
+            if end_dot:
+                break
+            else:
+                print('Las instrucciones no terminan en punto, ingrese nuevamente ruta:\n')
+        return instructions
+    
     #Extracción de estados de aceptación 
-    for i, instr in enumerate(content.split('\n')):
+    instructions = lector_texto()
+    for i, instr in enumerate(instructions):
         if i == 0:
             estados_aceptacion = re.findall(r'\d+',instr)
 
     print(f'estado de aceptación:{estados_aceptacion}')
 
     rules = []
-    for i, instr in enumerate(content.split('\n')):
+    for i, instr in enumerate(instructions):
         if i != 0:
             rules.append(instr)
 
     # print(f'Instrucciones {rules}')
     #=============================================================================================
+    #=============================================================================================
+    #==================================SOLICITUD USUARIO CADENA===================================
     user_string = input('Favor de introducir cadena: ')
-    # user_string = '01101'
+    # user_string = '11+111'
     # print(f'Hi {user_string}')
     current_state = '00'
     # print(f'current state:{current_state}')
     #=============================================================================================
-
     new_rules = []
     #conversión de {contenido} a lista
     def parse_field(val):
@@ -87,10 +113,10 @@ def simuladorMTU():
                 'sf': parse_field(items[3]),
                 'dir': items[4]                
             })
-
     #================================================================================================
     #================================================================================================
-    #INTERCAMBIO DE SIMBOLO '~' POR ESTADO/SIMBOLO RECIPROCO
+    #====================INTERCAMBIO DE SIMBOLO '~' POR ESTADO/SIMBOLO RECIPROCO=====================
+    #================================================================================================
     for lists in new_rules:
         # print(lists)
         for key, values in lists.items():
@@ -138,7 +164,8 @@ def simuladorMTU():
         print(i)
     #================================================================================================
     #================================================================================================
-    #===============MAQUINA DE TURING: SOLO DESPLAZAMIENTO EN CADENAS TIPOS 10101===================
+    #=====================================MAQUINA DE TURING==========================================
+    #================================================================================================
     def show(cinta, pos, state):
         exit = '╟'
         for i, c in enumerate(cinta):

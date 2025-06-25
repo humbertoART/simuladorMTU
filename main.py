@@ -9,8 +9,9 @@ def user_string_input():
             return user_string
         else:
             print("Cadena vacía, ingresela, nuevamente\n")
+
 #Lectura archivo
-def simuladorMTU():
+def load_program():
     dir_validate = {'!','>','<'}
     same_symbol = {'~'}
     symbols_banned = {chr(123),'}','[',']','<','>','!'}
@@ -222,6 +223,7 @@ def simuladorMTU():
             print("Intentelo de nuevo\n")
             continue
         break
+    return new_rules, estados_aceptacion
     #=============================================================================================
     #=============================================================================================
     #==================================SOLICITUD USUARIO CADENA===================================
@@ -230,7 +232,8 @@ def simuladorMTU():
     #     return user_string
     # user_string = '11+111'
     # print(f'Hi {user_string}')
-    user_string = user_string_input()
+def simulationMTU(user_string, new_rules, estados_aceptacion):
+     # user_string = user_string_input()
     current_state = '00'
     # print(f'current state:{current_state}')                
 
@@ -349,12 +352,15 @@ def simuladorMTU():
         print("La cadena ha sido aceptada")
     else:
         print("La cadena ha sido rechazada")
-    #================================================================================================
-    #================================================================================================
-while True:
-    simuladorMTU()
-    # user_string_input()
-    reset = input("\n¿Desea reiniciar la simulación con otra cadena (S/N): ").strip()
-    if reset != 'S':
-        print("SIMULADOR DE MTU FINALIZADO")
-        break
+#================================================================================================
+#================================================================================================
+if __name__ == "__main__":
+    rules, accept = load_program()
+
+    while True:
+        string = user_string_input()
+        simulationMTU(string,rules,accept)
+        reset = input("\n¿Desea reiniciar la simulación con otra cadena (S/N): ").strip()
+        if reset != 'S':
+            print("SIMULADOR DE MTU FINALIZADO")
+            break

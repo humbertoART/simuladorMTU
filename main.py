@@ -8,24 +8,24 @@ def user_string_input():
         if user_string:
             return user_string
         else:
-            print("Cadena vacía, ingresela, nuevamente\n")
+            print("Cadena vacía, ingrésela nuevamente\n")
 
 #Lectura archivo
 def load_program():
     dir_validate = {'!','>','<'}
     same_symbol = {'~'}
-    symbols_banned = {chr(123),'}','[',']','<','>','!'}
+    symbols_banned = {'}','[',']','<','>','!'}
 
     def lector_texto():
         while True:
             user_text = input("Ingrese ruta del archivo de texto, por favor: ")
             if not os.path.exists(user_text):
-                print("Texto no introducido, vuelva a intertalo\n")
+                print("Texto no introducido, vuelva a intentarlo\n")
                 continue
             # file = open(r"C:\Users\hrosa\OneDrive\Documentos\CIC IPN\Primer Semestre\Teoria Computacion\SIMULADORMTU\text.txt")
             file = open(user_text, "r", encoding="ascii")
             content = file.read()
-            print(content)
+            # print(content)
 
             instructions = content.split('\n')
             end_dot = True
@@ -49,7 +49,7 @@ def load_program():
             if i == 0:
                 estados_aceptacion = re.findall(r'\d+',instr)
 
-        print(f'estado de aceptación:{estados_aceptacion}')
+        # print(f'estado de aceptación:{estados_aceptacion}')
 
         rules = []
         for i, instr in enumerate(instructions):
@@ -167,24 +167,23 @@ def load_program():
             for key, value in i.items():
                 if key == 'ei' or key == 'ef' or key == 'si' or key == 'sf':
                     if not value:
-                        print("Falta un elemento:")
+                        print("Falta un elemento")
                         errors = True
                         break
                 if key == 'ei' or key == 'ef' or key == 'si' or key == 'sf':
                     if isinstance(value,list):
-                        for j in value:
-                            if j in symbols_banned:
+                        for m in value:
+                            if m in symbols_banned:
                                 print("Incluye elementos reservados, no permitido")
                                 errors = True
                                 break
                     elif value in symbols_banned:
-                        print('egrtszs',value)
                         print("Incluye elementos reservados, no permitido")
                         errors = True
                         break
                 if key == 'dir':
                     if not value:
-                        print("Regla invalida")
+                        print("Regla inválida")
                         errors = True
                         break
                     elif value not in dir_validate:
@@ -192,33 +191,47 @@ def load_program():
                         # lector_texto()
                         errors = True
                         break
-                elif key == 'ei':
+                if key == 'ei':
                     if isinstance(value,list):
                         for j in value:
                             if j in same_symbol:
-                                print("Es lista y es ~, ei")
+                                print("El valor de ei no está permitido")
                                 # lector_texto()
                                 errors = True
                                 break
                     elif value == '~':
-                        print("No es lista pero esta mal,ei")
+                        print("El valor de ei no está permitido")
+                        # print("No es lista pero esta mal,ei")
                         # lector_texto()
                         errors = True
                         break
 
-                elif key == 'si':
+                if key == 'si':
                     if isinstance(value,list):
                         for k in value:
                             if k in same_symbol:
-                                print("Es lista y es ~,si")
+                                print("El valor de si no está permitido")
                                 # lector_texto()
                                 errors = True
                                 break
                     elif value == '~':
-                        print("No es lista pero esta mal,si")
+                        print("El valor de si no está permitido")
+                        # print("No es lista pero esta mal,si")
                         # lector_texto()
                         errors = True
                         break
+                if key == 'ei' or key == 'ef':
+                    if isinstance(value, list):
+                        for n in value:
+                            if not n.startswith("0") or not n.isdigit():
+                                print(f"{key} debe empezar en 0 y contener solo digitos")
+                                errors = True
+                                break
+                    else:
+                        if not value.startswith("0") or not value.isdigit():
+                            print(f"{key} debe emepzar en 0 y contener solo digitos")
+                            errors = True
+                            break
         if errors:
             print("Intentelo de nuevo\n")
             continue
@@ -252,7 +265,7 @@ def simulationMTU(user_string, new_rules, estados_aceptacion):
                 exit += f"[{c}]"
             else:
                 exit += c
-        print(f"Cinta: {exit} estado actual:{state}")
+        print(f"Cinta: {exit} \nestado actual:{state}")
 
     while current_state not in estados_aceptacion:
         if list_string == []:
@@ -315,12 +328,12 @@ def simulationMTU(user_string, new_rules, estados_aceptacion):
 
         dir = apply_instruction['dir']
 
-        print(f'estado actual:{current_state}')
-        print(f'curent symbol:{symbol}')
-        print(f'next state:{ef}')
-        print(f'written symbol:{sf}')
-        print(f'direction:{dir}')
-        print(f'rule aplied: {apply_instruction}')
+        # print(f'estado actual:{current_state}')
+        # print(f'curent symbol:{symbol}')
+        # print(f'next state:{ef}')
+        # print(f'written symbol:{sf}')
+        # print(f'direction:{dir}')
+        # print(f'rule aplied: {apply_instruction}')
 
         list_string[pos] = sf
         current_state = ef
@@ -349,9 +362,9 @@ def simulationMTU(user_string, new_rules, estados_aceptacion):
             pass
 
     if current_state in estados_aceptacion:
-        print("La cadena ha sido aceptada")
+        print("===La cadena ha sido aceptada===")
     else:
-        print("La cadena ha sido rechazada")
+        print("===La cadena ha sido rechazada===")
 #================================================================================================
 #================================================================================================
 if __name__ == "__main__":
